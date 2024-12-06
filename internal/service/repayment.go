@@ -31,8 +31,8 @@ func NewRepaymentService(
 	}
 }
 
-func (r *RepaymentService) CreateRepayment(ctx context.Context, repayment *domain.LoanRepayment) (*domain.LoanRepayment, error) {
-	return r.repaymentRepo.CreateRepayment(ctx, repayment)
+func (r *RepaymentService) CreateRepayment(ctx context.Context, repayment *domain.LoanRepayment) error {
+	return r.repaymentRepo.CreateRepayment(ctx, nil, repayment)
 }
 
 func (r *RepaymentService) GetRepaymentByID(ctx context.Context, repaymentID int64) (*domain.LoanRepayment, error) {
@@ -78,7 +78,7 @@ func (r *RepaymentService) MakePayment(ctx context.Context, req *domain.MakePaym
 	go func() {
 		var errUpdateLoan error
 		childCtx := context.WithoutCancel(ctx)
-		loan.IsDelinquent, loan.MissedPayments, errUpdateLoan = r.loanService.CheckIsDelinquent(childCtx, loan.LoanID, req.Week)
+		loan.IsDelinquent, loan.MissedPayments, errUpdateLoan = r.loanService.CheckIsDelinquent(childCtx, loan.ID, req.Week)
 		if errUpdateLoan != nil {
 			log.Println(errUpdateLoan)
 			return

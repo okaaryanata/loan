@@ -14,8 +14,8 @@ func NewLoanRepository() *LoanRepository {
 	return &LoanRepository{}
 }
 
-func (l *LoanRepository) CreateLoan(ctx context.Context, loan *domain.Loan) (*domain.Loan, error) {
-	return nil, nil
+func (l *LoanRepository) CreateLoan(ctx context.Context, loan *domain.Loan) error {
+	return nil
 }
 
 func (l *LoanRepository) GetLoanByID(ctx context.Context, loanID int64) (*domain.Loan, error) {
@@ -32,4 +32,8 @@ func (l *LoanRepository) CheckIsDelinquent(ctx context.Context, loanID int64) (b
 
 func (l *LoanRepository) GetOutstandingBalance(ctx context.Context, loanID int64) (int, error) {
 	return 0, nil
+}
+
+func (l *LoanRepository) UpdateLoan(ctx context.Context, loan *domain.Loan) error {
+	return nil
 }

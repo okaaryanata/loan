@@ -26,10 +26,10 @@ func (r *RepaymentRepository) GetRepaymentsByLoanID(ctx context.Context, loanID 
 	return nil, nil
 }
 
-func (r *RepaymentRepository) MakePayment(ctx context.Context, loanID int64, week int, amount int) error {
+func (r *RepaymentRepository) MakePayment(ctx context.Context, req *domain.MakePaymentRequest) error {
 	return nil
 }
 
-func (r *RepaymentRepository) PrintSchedule(ctx context.Context, loanID int64) error {
+func (r *RepaymentRepository) PrintSchedule(ctx context.Context, userID int64, loanID int64) error {
 	return nil
 }

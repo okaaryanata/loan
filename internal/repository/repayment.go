@@ -218,3 +218,29 @@ func (r *RepaymentRepository) MakePayment(ctx context.Context, req *domain.MakeP
 
 	return nil
 }
+
+func (r *RepaymentRepository) GetLastRepaymentPaidByLoanID(ctx context.Context, loanID int64) (*domain.LoanRepayment, error) {
+	var repayment domain.LoanRepayment
+	err := r.db.QueryRow(ctx, query.QueryGetLastPaidRepaymentByLoanID, loanID).Scan(
+		&repayment.ID,
+		&repayment.LoanID,
+		&repayment.Week,
+		&repayment.Amount,
+		&repayment.Paid,
+		&repayment.DueDate,
+		&repayment.IsActive,
+		&repayment.CreatedBy,
+		&repayment.CreatedAt,
+		&repayment.UpdatedBy,
+		&repayment.UpdatedAt,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &repayment, nil
+}

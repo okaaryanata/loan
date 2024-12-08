@@ -3,10 +3,12 @@ package repository
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/okaaryanata/loan/internal/domain"
+	"github.com/okaaryanata/loan/internal/helper"
 	"github.com/okaaryanata/loan/internal/repository/query"
 )
 
@@ -80,6 +82,10 @@ func (l *LoanRepository) GetLoanByID(ctx context.Context, loanID int64) (*domain
 		&loan.UpdatedAt,
 	)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -184,6 +190,10 @@ func (l *LoanRepository) CheckIsDelinquent(ctx context.Context, loanID int64) (b
 		return false, err
 	}
 
+	if loan == nil {
+		return false, helper.NewErrorx(http.StatusNotFound, "loan not found")
+	}
+
 	return loan.IsDelinquent, nil
 }
 
@@ -191,6 +201,10 @@ func (l *LoanRepository) GetOutstandingBalance(ctx context.Context, loanID int64
 	loan, err := l.GetLoanByID(ctx, loanID)
 	if err != nil {
 		return 0, err
+	}
+
+	if loan == nil {
+		return 0, helper.NewErrorx(http.StatusNotFound, "loan not found")
 	}
 
 	return loan.OutstandingBalance, nil

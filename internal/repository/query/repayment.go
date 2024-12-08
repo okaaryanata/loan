@@ -125,4 +125,26 @@ var (
 			and r.is_active = true
 		ORDER BY r.due_date ASC;
 	`
+
+	QueryGetLastPaidRepaymentByLoanID = `
+		SELECT 
+			r.loan_repayment_id,
+			r.loan_id,
+			r.week,
+			r.amount,
+			r.paid,
+			r.due_date,
+			r.is_active,
+			r.created_by,
+			r.created_at,
+			r.updated_by,
+			r.updated_at
+		FROM loans.loan_repayments r
+		WHERE 
+			r.loan_id = $1
+			and r.paid = true
+			and r.is_active = true
+		ORDER BY r.due_date DESC
+		LIMIT 1;
+	`
 )

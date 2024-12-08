@@ -109,7 +109,7 @@ func (r *RepaymentService) MakePayment(ctx context.Context, req *domain.MakePaym
 		var errUpdateLoan helper.Errorx
 		childCtx := context.WithoutCancel(ctx)
 		loan.UpdatedBy = req.OperatedBy
-		loan.IsDelinquent, loan.MissedPayments, errUpdateLoan = r.loanService.CheckIsDelinquent(childCtx, loan.ID, repayment.Week)
+		loan.IsDelinquent, loan.MissedPayments, errUpdateLoan = r.loanService.CheckIsDelinquent(childCtx, loan.ID)
 		if errUpdateLoan != nil {
 			log.Println(errUpdateLoan)
 			return

@@ -136,7 +136,7 @@ func (l *LoanService) GetLoanByIDandUserID(ctx context.Context, loanID, userID i
 	return loan, nil
 }
 
-func (l *LoanService) CheckIsDelinquent(ctx context.Context, loanID int64, currentWeek int) (bool, int, helper.Errorx) {
+func (l *LoanService) CheckIsDelinquent(ctx context.Context, loanID int64) (bool, int, helper.Errorx) {
 	var (
 		totalMissedPayments int
 		isDelinquent        bool
@@ -147,8 +147,17 @@ func (l *LoanService) CheckIsDelinquent(ctx context.Context, loanID int64, curre
 		return false, 0, helper.NewErrorxFromErr(err)
 	}
 
+	lastPaid, err := l.repaymentRepo.GetLastRepaymentPaidByLoanID(ctx, loanID)
+	if err != nil {
+		return false, 0, helper.NewErrorxFromErr(err)
+	}
+
+	if lastPaid == nil {
+		return false, 0, nil
+	}
+
 	for idx := range repayments {
-		if repayments[idx].Week > currentWeek {
+		if repayments[idx].Week > lastPaid.Week {
 			break
 		}
 

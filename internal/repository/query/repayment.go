@@ -25,16 +25,104 @@ var (
 	`
 
 	QueryGetRepaymentByID = `
-		SELECT * FROM loans.loan_repayments 
+		SELECT
+			loan_repayment_id,
+			loan_id,
+			week,
+			amount,
+			paid,
+			due_date,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loan_repayments 
 		WHERE 
 			loan_repayment_id = $1
 			and is_active = true;
 	`
 
+	QueryGetRepaymentByIDAndLoanID = `
+		SELECT
+			loan_repayment_id,
+			loan_id,
+			week,
+			amount,
+			paid,
+			due_date,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loan_repayments 
+		WHERE 
+			loan_repayment_id = $1
+			and loan_id = $2
+			and is_active = true;
+	`
+
 	QueryGetRepaymentsByLoanID = `
-		SELECT * FROM loans.loan_repayments 
+		SELECT 
+			loan_repayment_id,
+			loan_id,
+			week,
+			amount,
+			paid,
+			due_date,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loan_repayments 
 		WHERE 
 			loan_id = $1
-			and is_active = true;
+			and is_active = true
+		ORDER BY due_date ASC;
+	`
+
+	QueryGetRepaymentsByLoanIDAndUserID = `
+		SELECT 
+			r.loan_repayment_id,
+			r.loan_id,
+			r.week,
+			r.amount,
+			r.paid,
+			r.due_date,
+			r.is_active,
+			r.created_by,
+			r.created_at,
+			r.updated_by,
+			r.updated_at
+		FROM loans.loan_repayments r
+		JOIN loans.loans l ON r.loan_id = l.loan_id
+		WHERE 
+			r.loan_id = $1
+			and l.user_id = $2
+			and r.is_active = true
+		ORDER BY r.due_date ASC;
+	`
+
+	QueryGetRepaymentsByUserID = `
+		SELECT 
+			r.loan_repayment_id,
+			r.loan_id,
+			r.week,
+			r.amount,
+			r.paid,
+			r.due_date,
+			r.is_active,
+			r.created_by,
+			r.created_at,
+			r.updated_by,
+			r.updated_at
+		FROM loans.loan_repayments r
+		JOIN loans.loans l ON r.loan_id = l.loan_id
+		WHERE 
+			l.user_id = $1
+			and r.is_active = true
+		ORDER BY r.due_date ASC;
 	`
 )

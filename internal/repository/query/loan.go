@@ -38,16 +38,95 @@ var (
 	`
 
 	QueryGetLoanByID = `
-		SELECT * FROM loans.loans 
+		SELECT
+			loan_id,
+			code,
+			user_id,
+			principal,
+			interest_rate,
+			total_weeks,
+			weekly_repayment,
+			outstanding_balance,
+			missed_payments,
+			is_delinquent,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loans 
 		WHERE 
 			loan_id = $1
 			and is_active = true;
 	`
 
+	QueryGetLoanByCode = `
+		SELECT
+			loan_id,
+			code,
+			user_id,
+			principal,
+			interest_rate,
+			total_weeks,
+			weekly_repayment,
+			outstanding_balance,
+			missed_payments,
+			is_delinquent,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loans 
+		WHERE 
+			code = $1
+			and is_active = true;
+	`
+
 	QueryGetLoansByUserID = `
-		SELECT * FROM loans.loans 
+		SELECT 
+			loan_id,
+			code,
+			user_id,
+			principal,
+			interest_rate,
+			total_weeks,
+			weekly_repayment,
+			outstanding_balance,
+			missed_payments,
+			is_delinquent,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loans 
 		WHERE 
 			user_id = $1
+			and is_active = true;
+	`
+
+	QueryGetLoanByIDandUserID = `
+		SELECT
+			loan_id,
+			code,
+			user_id,
+			principal,
+			interest_rate,
+			total_weeks,
+			weekly_repayment,
+			outstanding_balance,
+			missed_payments,
+			is_delinquent,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.loans 
+		WHERE 
+			loan_id = $1
+			and user_id = $2
 			and is_active = true;
 	`
 )

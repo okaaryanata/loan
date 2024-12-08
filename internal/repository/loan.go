@@ -7,7 +7,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/okaaryanata/loan/internal/domain"
-	"github.com/okaaryanata/loan/internal/helper"
 	"github.com/okaaryanata/loan/internal/repository/query"
 )
 
@@ -62,9 +61,24 @@ func (l *LoanRepository) CreateLoan(ctx context.Context, tx pgx.Tx, loan *domain
 }
 
 func (l *LoanRepository) GetLoanByID(ctx context.Context, loanID int64) (*domain.Loan, error) {
-	row := l.db.QueryRow(ctx, query.QueryGetLoanByID, loanID)
 	loan := &domain.Loan{}
-	err := helper.StructScan(row, loan)
+	err := l.db.QueryRow(ctx, query.QueryGetLoanByID, loanID).Scan(
+		&loan.ID,
+		&loan.Code,
+		&loan.UserID,
+		&loan.Principal,
+		&loan.InterestRate,
+		&loan.TotalWeeks,
+		&loan.WeeklyRepayment,
+		&loan.OutstandingBalance,
+		&loan.MissedPayments,
+		&loan.IsDelinquent,
+		&loan.IsActive,
+		&loan.CreatedBy,
+		&loan.CreatedAt,
+		&loan.UpdatedBy,
+		&loan.UpdatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -81,12 +95,66 @@ func (l *LoanRepository) GetLoansByUserID(ctx context.Context, userID int64) ([]
 	defer rows.Close()
 
 	loans := []*domain.Loan{}
-	err = helper.StructScanAll(rows, loans)
-	if err != nil {
+	for rows.Next() {
+		var loan domain.Loan
+		err := rows.Scan(
+			&loan.ID,
+			&loan.Code,
+			&loan.UserID,
+			&loan.Principal,
+			&loan.InterestRate,
+			&loan.TotalWeeks,
+			&loan.WeeklyRepayment,
+			&loan.OutstandingBalance,
+			&loan.MissedPayments,
+			&loan.IsDelinquent,
+			&loan.IsActive,
+			&loan.CreatedBy,
+			&loan.CreatedAt,
+			&loan.UpdatedBy,
+			&loan.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		loans = append(loans, &loan)
+	}
+
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
 	return loans, nil
+}
+
+func (l *LoanRepository) GetLoansByIDandUserID(ctx context.Context, loanID, userID int64) (*domain.Loan, error) {
+	loan := &domain.Loan{}
+	err := l.db.QueryRow(ctx, query.QueryGetLoanByIDandUserID, loanID, userID).Scan(
+		&loan.ID,
+		&loan.Code,
+		&loan.UserID,
+		&loan.Principal,
+		&loan.InterestRate,
+		&loan.TotalWeeks,
+		&loan.WeeklyRepayment,
+		&loan.OutstandingBalance,
+		&loan.MissedPayments,
+		&loan.IsDelinquent,
+		&loan.IsActive,
+		&loan.CreatedBy,
+		&loan.CreatedAt,
+		&loan.UpdatedBy,
+		&loan.UpdatedAt,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return loan, nil
 }
 
 func (l *LoanRepository) UpdateLoan(ctx context.Context, loan *domain.Loan) error {
@@ -126,4 +194,34 @@ func (l *LoanRepository) GetOutstandingBalance(ctx context.Context, loanID int64
 	}
 
 	return loan.OutstandingBalance, nil
+}
+
+func (l *LoanRepository) GetLoanByCode(ctx context.Context, code string) (*domain.Loan, error) {
+	loan := &domain.Loan{}
+	err := l.db.QueryRow(ctx, query.QueryGetLoanByCode, code).Scan(
+		&loan.ID,
+		&loan.Code,
+		&loan.UserID,
+		&loan.Principal,
+		&loan.InterestRate,
+		&loan.TotalWeeks,
+		&loan.WeeklyRepayment,
+		&loan.OutstandingBalance,
+		&loan.MissedPayments,
+		&loan.IsDelinquent,
+		&loan.IsActive,
+		&loan.CreatedBy,
+		&loan.CreatedAt,
+		&loan.UpdatedBy,
+		&loan.UpdatedAt,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return loan, nil
 }

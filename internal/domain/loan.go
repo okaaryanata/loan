@@ -51,9 +51,11 @@ type (
 	}
 
 	MakePaymentRequest struct {
-		UserID int64   `json:"userID"`
-		LoanID int64   `json:"loanID"`
-		Week   int     `json:"week"`
-		Amount float64 `json:"amount"`
+		UserID      int64   `json:"userID"`
+		LoanID      int64   `json:"loanID"`
+		RepaymentID int64   `json:"repaymentID"`
+		Amount      float64 `json:"amount"`
+		Paid        bool    `json:"-"`
+		OperatedBy  string  `json:"operatedBy"`
 	}
 )

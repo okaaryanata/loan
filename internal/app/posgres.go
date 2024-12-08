@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/okaaryanata/loan/internal/app/migration"
 )
 
-func InitPostgresDB() (*pgxpool.Pool, error) {
+func (app *AppConfig) InitPostgresDB() error {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
@@ -32,25 +31,26 @@ func InitPostgresDB() (*pgxpool.Pool, error) {
 
 	dbPool, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
-		return nil, fmt.Errorf("failed while create connection to database: %w", err)
+		return fmt.Errorf("failed while create connection to database: %w", err)
 	}
 
 	if err := dbPool.Ping(ctx); err != nil {
 		dbPool.Close()
-		return nil, fmt.Errorf("error while ping connection to database: %w", err)
+		return fmt.Errorf("error while ping connection to database: %w", err)
 	}
 
-	initTable, _ := strconv.ParseBool(os.Getenv("DB_INIT_TABLE"))
-	if initTable {
+	if app.InitDB {
 		err = initTableDDL(ctx, dbPool)
 		if err != nil {
 			dbPool.Close()
-			return nil, fmt.Errorf("error while init table: %w", err)
+			return fmt.Errorf("error while init table: %w", err)
 		}
 	}
 
 	log.Println("Successfully connected to the db")
-	return dbPool, nil
+	app.DB = dbPool
+
+	return nil
 }
 
 func initTableDDL(ctx context.Context, db *pgxpool.Pool) error {

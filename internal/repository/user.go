@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/okaaryanata/loan/internal/domain"
-	"github.com/okaaryanata/loan/internal/helper"
 	"github.com/okaaryanata/loan/internal/repository/query"
 )
 
@@ -32,23 +32,89 @@ func (u *UserRepository) CreateUser(ctx context.Context, user *domain.User) erro
 }
 
 func (u *UserRepository) GetUserByID(ctx context.Context, userID int64) (*domain.User, error) {
-	row := u.db.QueryRow(ctx, query.QueryGetUserByID, userID)
 	user := &domain.User{}
-	err := helper.StructScan(row, user)
+	err := u.db.QueryRow(ctx, query.QueryGetUserByID, userID).Scan(
+		&user.ID,
+		&user.Username,
+		&user.IsActive,
+		&user.CreatedBy,
+		&user.CreatedAt,
+		&user.UpdatedBy,
+		&user.UpdatedAt,
+	)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
 	return user, nil
 }
 
-func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (*domain.User, error) {
-	row := u.db.QueryRow(ctx, query.QueryGetUserByUsername, username)
-	user := &domain.User{}
-	err := helper.StructScan(row, user)
+func (u *UserRepository) GetUserByUsernames(ctx context.Context, username ...string) ([]*domain.User, error) {
+	rows, err := u.db.Query(ctx, query.QueryGetUserByUsernames, username)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	defer rows.Close()
+
+	var users []*domain.User
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.IsActive,
+			&user.CreatedBy,
+			&user.CreatedAt,
+			&user.UpdatedBy,
+			&user.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (u *UserRepository) GetUsers(ctx context.Context) ([]*domain.User, error) {
+	rows, err := u.db.Query(ctx, query.QueryGetUsers)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var users []*domain.User
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.IsActive,
+			&user.CreatedBy,
+			&user.CreatedAt,
+			&user.UpdatedBy,
+			&user.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }

@@ -11,16 +11,46 @@ var (
 	`
 
 	QueryGetUserByID = `
-		SELECT * FROM loans.users
+		SELECT
+			user_id,
+			username,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.users
 		WHERE 
 			user_id = $1
 			AND is_active = true
 	`
 
-	QueryGetUserByUsername = `
-		SELECT * FROM loans.users 
+	QueryGetUserByUsernames = `
+		SELECT
+			user_id,
+			username,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.users 
 		WHERE 
-			username = $1
+			username = ANY($1)
 			AND is_active = true
+	`
+
+	QueryGetUsers = `
+		SELECT
+			user_id,
+			username,
+			is_active,
+			created_by,
+			created_at,
+			updated_by,
+			updated_at
+		FROM loans.users 
+		WHERE 
+			is_active = true
 	`
 )

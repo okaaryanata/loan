@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loans-app
+  namespace: kmskcg-lab
+  labels:
+    app: svaha-loans
+spec:
+  replicas: 2  # Number of pod replicas
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # Ensure at least 1 Pods are always running
+      maxSurge: 1        # Allow up to 3 Pods during the update
+  selector:
+    matchLabels:
+      app: svaha-loans
+  template:
+    metadata:
+      labels:
+        app: svaha-loans
+    spec:
+      containers:
+      - name: loans-app
+        image: ${CI_IMAGE}  # docker image name and tag
+        ports:
+        - containerPort: ${SERVICE_PORT}
+        readinessProbe:
+          httpGet:
+            path: /svaha-loan/health
+            port: ${SERVICE_PORT}
+          initialDelaySeconds: 5  # Delay before starting the probe
+          periodSeconds: 10       # Frequency of the probe
+          failureThreshold: 3     # Fail after 3 consecutive failures
+        livenessProbe:
+          httpGet:
+            path: /svaha-loan/health
+            port: ${SERVICE_PORT}
+          initialDelaySeconds: 10  # Delay before the liveness probe starts
+          periodSeconds: 60        # Frequency of the probe
+          failureThreshold: 3      # Restart after 3 consecutive failures
+        resources:
+          limits:
+            memory: "125Mi"
+            cpu: "0.125"
+          requests:
+            memory: "70Mi"
+            cpu: "0.08"
+        envFrom:
+        - configMapRef:
+            name: svaha-loans-config
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/data
+      imagePullSecrets:
+      - name: ${DOCKER_REGISTRY_SECRET}
+      volumes:
+      - name: app-data
+        emptyDir: {}

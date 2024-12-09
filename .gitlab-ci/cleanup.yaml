@@ -1,0 +1,15 @@
+#==============================================================================
+# Cleanup Jobs
+#==============================================================================
+
+remove_image:
+  stage: cleanup
+  needs:
+    - deploy_rest
+  extends:
+    - .before-script-ssh
+  script:
+    # Remove unused Docker images
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "
+      docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY &&
+      docker image prune -a -f"

@@ -1,0 +1,45 @@
+#==============================================================================
+# Deployment Jobs
+#==============================================================================
+
+deploy_rest:
+  stage: deploy
+  needs:
+    - build_app_image
+  extends:
+    - .before-script-ssh
+  script:
+    - echo "Deploying to Kubernetes..."
+
+    # Ensure the correct path and apply the 'sed' transformations
+    - echo "Rendering deployment.yaml..."
+    - sed "s|\${CI_IMAGE}|$CI_IMAGE|g; s|\${DOCKER_REGISTRY_SECRET}|$DOCKER_REGISTRY_SECRET|g; s|\${SERVICE_PORT}|$SERVICE_PORT|g" deployment/kube-manifest/deployment.yaml > deployment_rendered.yaml
+    - sed "s|\${SERVICE_PORT}|$SERVICE_PORT|g; s|\${NODE_PORT}|$NODE_PORT|g" deployment/kube-manifest/service.yaml > service_rendered.yaml
+
+    # Create temporary directory on the VPS
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "mkdir -p ./tmp-app/"
+
+    # Upload the rendered manifest and service file to the VPS
+    - scp -o StrictHostKeyChecking=no deployment_rendered.yaml $HOST_VPS:./tmp-app/deployment.yaml
+    - scp -o StrictHostKeyChecking=no service_rendered.yaml $HOST_VPS:./tmp-app/service.yaml
+
+    # Pull the latest Docker image
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "
+      docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY &&
+      docker pull $CI_IMAGE"
+
+    # Apply the Kubernetes manifests
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "
+      kubectl apply -f ./tmp-app/deployment.yaml -n kmskcg-lab $K8S_ARGS && 
+      kubectl apply -f ./tmp-app/service.yaml -n kmskcg-lab $K8S_ARGS"
+
+    # Wait for the pods to be in the 'Ready' state
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "
+      kubectl rollout status deployment/loans-app -n kmskcg-lab --timeout=180s &&
+      kubectl wait --for=condition=Ready pod -l app=svaha-loans -n kmskcg-lab --timeout=180s"
+
+    # Clean up temporary directory on VPS
+    - ssh -o StrictHostKeyChecking=no $HOST_VPS "rm -rf ./tmp-app/"
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - when: manual

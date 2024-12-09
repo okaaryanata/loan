@@ -1,0 +1,25 @@
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
+
+stages:
+  - build
+  - deploy
+  - cleanup
+
+variables:
+  CI_REGISTRY: registry.gitlab.com
+  CI_IMAGE: $CI_REGISTRY/kmskcg-lab/loan:$CI_COMMIT_SHA
+  DOCKER_REGISTRY_SECRET: $DOCKER_REGISTRY_SECRET
+  SERVICE_PORT: $SERVICE_PORT
+  NODE_PORT: $NODE_PORT
+  
+
+include:
+  - .gitlab-ci/build.yaml
+  - .gitlab-ci/deployment.yaml
+  - .gitlab-ci/cleanup.yaml
+  - .gitlab-ci/extend.yaml

@@ -1,0 +1,8 @@
+.before-script-ssh:
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $IP_VPS >> ~/.ssh/known_hosts
+    - echo -e "Host kmskcg\n  HostName $IP_VPS\n  User kmskcg\n  IdentityFile ~/.ssh/id_rsa\n  UserKnownHostsFile ~/.ssh/known_hosts" >> ~/.ssh/config

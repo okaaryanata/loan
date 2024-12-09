@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loans-svc
+  namespace: kmskcg-lab
+  labels:
+    app: svaha-loans
+spec:
+  selector:
+    app: svaha-loans
+  ports:
+    - protocol: TCP
+      port: ${SERVICE_PORT}        # Service port
+      targetPort: ${SERVICE_PORT}  # Container port
+      nodePort: ${NODE_PORT}       # Node port
+  type: NodePort

@@ -31,7 +31,7 @@ spec:
             port: 9090
           initialDelaySeconds: 5  # Delay before starting the probe
           periodSeconds: 10       # Frequency of the probe
-          failureThreshold: 5     # Fail after 3 consecutive failures
+          failureThreshold: 3     # Fail after 5 consecutive failures
         livenessProbe:
           httpGet:
             path: /svaha-loan/health
@@ -42,10 +42,10 @@ spec:
         resources:
           limits:
             memory: "125Mi"
-            cpu: "0.125"
+            cpu: "0.256"
           requests:
             memory: "70Mi"
-            cpu: "0.08"
+            cpu: "0.125"
         envFrom:
         - configMapRef:
             name: svaha-loans-config

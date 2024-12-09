@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/okaaryanata/loan/internal/api/health"
 	"github.com/okaaryanata/loan/internal/api/loan"
 	"github.com/okaaryanata/loan/internal/api/repayment"
@@ -20,12 +18,6 @@ func main() {
 }
 
 func startService() {
-	// Load env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	app := &app.AppConfig{}
 	app.InitService()
 	defer app.DB.Close()

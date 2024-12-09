@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  svaha:
+    image: loans-app:latest  
+    container_name: loans-app
+    # not for local deployment
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 100M   # Memory limit
+    #       cpus: '0.5'    # CPU limit
+    #     reservations:
+    #       memory: 100M   # Guaranteed memory reservation
+    #       cpus: '0.5'    # Minimum CPU reservation  
+    ports:
+      - "9901:9901"                
+    environment:
+      - ENV_VAR=value              
+    volumes:
+      - ./app_data:/app/data 
+    restart: unless-stopped
+    # Use runtime flags instead of deploy.resources for local Compose mode
+    mem_limit: 100m
+    cpus: "0.5"

@@ -1,0 +1,13 @@
+#==============================================================================
+# Build Jobs
+#==============================================================================
+
+build_app_image:
+  stage: build
+  script:
+    - docker build -t $CI_IMAGE .
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker push $CI_IMAGE
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - when: manual

@@ -41,11 +41,11 @@ spec:
           failureThreshold: 3      # Restart after 3 consecutive failures
         resources:
           limits:
-            memory: "256Mi"
-            cpu: "0.25"
+            memory: "125Mi"
+            cpu: "0.125"
           requests:
-            memory: "80Mi"
-            cpu: "0.1"
+            memory: "70Mi"
+            cpu: "0.08"
         envFrom:
         - configMapRef:
             name: svaha-loans-config

@@ -89,7 +89,9 @@ kubectl apply -f /deployment/kube-manifest/deployment.yaml
 | `POST` | `/repayment`                                 | Make a repayment, will automatically update outstanding_balance, missed_payments etc |
 | `GET`  | `/repayment/schedule/user/{userID}?loanID=1` | List all user repayments or specific loanID                                          |
 
-## [Postman Document](https://documenter.getpostman.com/view/7748154/2sAYBd77xw)
+## [Postman Document Link](https://documenter.getpostman.com/view/7748154/2sAYBd77xw)
+
+This service has been deployed to my VPS, and you can access it via the link above.
 
 ## Environment Variables
 

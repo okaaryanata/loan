@@ -24,18 +24,18 @@ spec:
       - name: loans-app
         image: ${CI_IMAGE}  # docker image name and tag
         ports:
-        - containerPort: 9090
+        - containerPort: ${SERVICE_PORT}
         readinessProbe:
           httpGet:
             path: /svaha-loan/health
-            port: 9090
+            port: ${SERVICE_PORT}
           initialDelaySeconds: 5  # Delay before starting the probe
           periodSeconds: 10       # Frequency of the probe
           failureThreshold: 3     # Fail after 3 consecutive failures
         livenessProbe:
           httpGet:
             path: /svaha-loan/health
-            port: 9090
+            port: ${SERVICE_PORT}
           initialDelaySeconds: 10  # Delay before the liveness probe starts
           periodSeconds: 60        # Frequency of the probe
           failureThreshold: 3      # Restart after 3 consecutive failures

@@ -10,7 +10,7 @@ spec:
     app: svaha-loans
   ports:
     - protocol: TCP
-      port: 9090     # Service port
-      targetPort: 9090  # Container port
-      nodePort: 30081 # Node port
+      port: ${SERVICE_PORT}        # Service port
+      targetPort: ${SERVICE_PORT}  # Container port
+      nodePort: ${NODE_PORT}       # Node port
   type: NodePort

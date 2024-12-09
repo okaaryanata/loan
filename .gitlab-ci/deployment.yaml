@@ -13,14 +13,15 @@ deploy_rest:
 
     # Ensure the correct path and apply the 'sed' transformations
     - echo "Rendering deployment.yaml..."
-    - sed "s|\${CI_IMAGE}|$CI_IMAGE|g; s|\${DOCKER_REGISTRY_SECRET}|$DOCKER_REGISTRY_SECRET|g" deployment/kube-manifest/deployment.yaml > deployment_rendered.yaml
+    - sed "s|\${CI_IMAGE}|$CI_IMAGE|g; s|\${DOCKER_REGISTRY_SECRET}|$DOCKER_REGISTRY_SECRET|g; s|\${SERVICE_PORT}|$SERVICE_PORT|g" deployment/kube-manifest/deployment.yaml > deployment_rendered.yaml
+    - sed "s|\${SERVICE_PORT}|$SERVICE_PORT|g; s|\${NODE_PORT}|$NODE_PORT|g" deployment/kube-manifest/service.yaml > service_rendered.yaml
 
     # Create temporary directory on the VPS
     - ssh -o StrictHostKeyChecking=no $HOST_VPS "mkdir -p ./tmp-app/"
 
     # Upload the rendered manifest and service file to the VPS
     - scp -o StrictHostKeyChecking=no deployment_rendered.yaml $HOST_VPS:./tmp-app/deployment.yaml
-    - scp -o StrictHostKeyChecking=no deployment/kube-manifest/service.yaml $HOST_VPS:./tmp-app/service.yaml
+    - scp -o StrictHostKeyChecking=no service_rendered.yaml $HOST_VPS:./tmp-app/service.yaml
 
     # Pull the latest Docker image
     - ssh -o StrictHostKeyChecking=no $HOST_VPS "

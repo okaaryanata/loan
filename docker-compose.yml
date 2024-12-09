@@ -14,9 +14,7 @@ services:
     #       memory: 100M   # Guaranteed memory reservation
     #       cpus: '0.5'    # Minimum CPU reservation  
     ports:
-      - "9901:9901"                
-    environment:
-      - ENV_VAR=value              
+      - "9090:9090"              
     volumes:
       - ./app_data:/app/data 
     restart: unless-stopped

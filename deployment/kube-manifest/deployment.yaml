@@ -49,6 +49,7 @@ spec:
         envFrom:
         - configMapRef:
             name: svaha-loans-config
+            namespace: kmskcg-lab
         volumeMounts:
         - name: app-data
           mountPath: /app/data

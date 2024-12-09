@@ -30,8 +30,8 @@ spec:
             path: /svaha-loan/health
             port: 9090
           initialDelaySeconds: 5  # Delay before starting the probe
-          periodSeconds: 5        # Frequency of the probe
-          failureThreshold: 3     # Fail after 3 consecutive failures
+          periodSeconds: 10       # Frequency of the probe
+          failureThreshold: 5     # Fail after 3 consecutive failures
         livenessProbe:
           httpGet:
             path: /svaha-loan/health

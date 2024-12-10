@@ -6,9 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/okaaryanata/loan/internal/api/health"
 	"github.com/okaaryanata/loan/internal/api/loan"
+	"github.com/okaaryanata/loan/internal/api/middleware"
 	"github.com/okaaryanata/loan/internal/api/repayment"
 	"github.com/okaaryanata/loan/internal/api/user"
 	"github.com/okaaryanata/loan/internal/app"
+	"github.com/okaaryanata/loan/internal/domain"
 	"github.com/okaaryanata/loan/internal/repository"
 	"github.com/okaaryanata/loan/internal/service"
 )
@@ -39,8 +41,15 @@ func startService() {
 	repaymentController := repayment.NewRepaymentController(repaymentSvc)
 
 	// Create main route
-	router := gin.Default()
-	mainRoute := router.Group("/svaha-loan")
+	router := gin.New()
+	router.Use(gin.LoggerWithConfig(gin.LoggerConfig{
+		SkipPaths: middleware.GetListSkipLogPath(),
+	}))
+	router.Use(gin.Recovery())
+	router.Use(middleware.SetCORSMiddleware())
+
+	// Register main route
+	mainRoute := router.Group(domain.MainRoute)
 
 	// Register routes
 	healthController.RegisterRoutes(mainRoute)

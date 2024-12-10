@@ -6,6 +6,7 @@ type (
 )
 
 var (
+	MainRoute                 = "/svaha-loan"
 	StatusCode TypeStatusCode = "statusCode"
 )
 

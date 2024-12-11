@@ -29,16 +29,18 @@ spec:
           httpGet:
             path: /svaha-loan/health
             port: ${SERVICE_PORT}
-          initialDelaySeconds: 5  # Delay before starting the probe
-          periodSeconds: 10       # Frequency of the probe
-          failureThreshold: 3     # Fail after 3 consecutive failures
+          initialDelaySeconds: 20  # Delay before starting the probe
+          periodSeconds: 10        # Frequency of the probe
+          timeoutSeconds: 2        # Timeout to prevent hanging probes
+          failureThreshold: 5      # Fail after 5 consecutive failures
         livenessProbe:
           httpGet:
             path: /svaha-loan/health
             port: ${SERVICE_PORT}
-          initialDelaySeconds: 10  # Delay before the liveness probe starts
-          periodSeconds: 60        # Frequency of the probe
-          failureThreshold: 3      # Restart after 3 consecutive failures
+          initialDelaySeconds: 30  # Delay before the liveness probe starts
+          periodSeconds: 30        # Frequency of the probe
+          timeoutSeconds: 2        # Timeout to prevent hanging probes
+          failureThreshold: 5      # Restart after 5 consecutive failures
         resources:
           limits:
             memory: "125Mi"

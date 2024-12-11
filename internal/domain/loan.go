@@ -9,11 +9,11 @@ type (
 		Code               string    `json:"code" db:"code"`
 		Principal          float64   `json:"principal" db:"principal"`
 		InterestRate       float64   `json:"interestRate" db:"interest_rate"`
-		TotalWeeks         int       `json:"totalWeeks" db:total_weeks`
+		TotalWeeks         int       `json:"totalWeeks" db:"total_weeks"`
 		WeeklyRepayment    float64   `json:"weeklyRepayment" db:"weekly_repayment"`
-		OutstandingBalance float64   `json:"outstandingBalance" db:outstanding_balance`
-		MissedPayments     int       `json:"missedPayments" db:missed_payments`
-		IsDelinquent       bool      `json:"isDelinquent" db:is_delinquent`
+		OutstandingBalance float64   `json:"outstandingBalance" db:"outstanding_balance"`
+		MissedPayments     int       `json:"missedPayments" db:"missed_payments"`
+		IsDelinquent       bool      `json:"isDelinquent" db:"is_delinquent"`
 		IsActive           bool      `json:"isActive" db:"is_active"`
 		CreatedAt          time.Time `json:"-" db:"created_at"`
 		CreatedBy          string    `json:"-" db:"created_by"`

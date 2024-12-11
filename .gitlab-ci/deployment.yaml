@@ -35,8 +35,8 @@ deploy_rest:
 
     # Wait for the pods to be in the 'Ready' state
     - ssh -o StrictHostKeyChecking=no $HOST_VPS "
-      kubectl rollout status deployment/loans-app -n kmskcg-lab --timeout=180s &&
-      kubectl wait --for=condition=Ready pod -l app=svaha-loans -n kmskcg-lab --timeout=180s"
+      kubectl rollout status deployment/loans-app -n kmskcg-lab --timeout=300s &&
+      kubectl wait --for=condition=Ready pod -l app=svaha-loans -n kmskcg-lab --timeout=300s"
 
     # Clean up temporary directory on VPS
     - ssh -o StrictHostKeyChecking=no $HOST_VPS "rm -rf ./tmp-app/"

@@ -4,7 +4,7 @@ import "time"
 
 type (
 	User struct {
-		ID         int64      `json:"userID db:"user_id"`
+		ID         int64      `json:"userID" db:"user_id"`
 		Username   string     `json:"username" db:"username"`
 		IsActive   bool       `json:"isActive" db:"is_active"`
 		CreatedAt  time.Time  `json:"-" db:"created_at"`
